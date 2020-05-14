@@ -9,16 +9,16 @@
           <span>开关</span>
         </div>
         <div class="icon-wrapper">
-          <span>亮度</span>
+          <span @click="showSetting(1)">主题</span>
         </div>
         <div class="icon-wrapper">
-          <span @click="fontSettingShow = !fontSettingShow ">字号</span>
+          <span @click="fontSettingShow = !fontSettingShow;showSetting(0)">字号</span>
         </div>
       </div>
     </transition>
     <transition name="slide-up">
       <div class="setting-wrapper" v-show="fontSettingShow">
-        <div class="setting-font-size">
+        <div class="setting-font-size" v-if="showFlag == 0">
           <div class="preview" :style="{'font-size': fontSizeList[0].fontSize + 'px'}">A</div>
           <div class="select-wrapper" v-for="(item, index) in fontSizeList" :key="index">
             <div class="point"
@@ -27,6 +27,15 @@
           </div>
           <div class="preview" :style="{'font-size': fontSizeList[fontSizeList.length-1].fontSize + 'px'}">A</div>
         </div>
+        <div class="setting-theme" v-else-if="showFlag == 1">
+          <div class="setting-theme-item" v-for="(item, index) in themeList" :key="index">
+            <div class="preview"
+            :style="{background: item.style.body.background}"
+            @click="$emit('setTheme', index)"
+            ></div>
+            <div class="text">{{item.name}}</div>
+          </div>
+        </div>
       </div>
     </transition>
   </div>
@@ -34,16 +43,18 @@
 
 <script>
 export default {
-  props: ['show', 'fontSizeList'],
+  props: ['show', 'fontSizeList', 'defaultTheme', 'themeList'],
   data () {
     return {
       fontSettingShow: false,
-      defaultFontSize: 14
+      defaultFontSize: 14,
+      showFlag: 0
     }
   },
   methods: {
-    showFontSetting () {
+    showSetting (flag) {
       this.fontSettingShow = true
+      this.showFlag = flag
     },
     hideFontSetting () {
       this.fontSettingShow = false
@@ -52,6 +63,9 @@ export default {
       this.defaultFontSize = fontSize
       this.$emit('setFontSize', fontSize)
     }
+  },
+  created () {
+    console.log(this.themeList)
   }
 }
 </script>
@@ -106,6 +120,28 @@ export default {
         align-items: center;
         justify-content: space-around;
       }
+  }
+  .setting-theme {
+    height: 100%;
+    display: flex;
+    .setting-theme-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: px2rem(5);
+      box-sizing: border-box;
+      .preview {
+        flex: 1;
+        height: px2rem(36);
+        border: p2xrem(3) solid #000;
+      }
+      .text {
+        flex: 0 0 px2rem(30);
+        font-size: px2rem(16);
+        color: #333;
+        @include center;
+      }
+    }
   }
 }
 .hide-box-shadow {

@@ -1,7 +1,15 @@
 <template>
   <div class="ebook">
     <title-bar :show="menuShow"></title-bar>
-    <menu-bar :show="menuShow" ref="menuBar" :fontSizeList="fontSizeList" @setFontSize="handleSetFontSize"></menu-bar>
+    <menu-bar
+    :show="menuShow"
+    ref="menuBar"
+    :fontSizeList="fontSizeList"
+    @setFontSize="handleSetFontSize"
+    :themeList="themeList"
+    :defaultTheme="defaultTheme"
+    @setTheme="setTheme"
+    ></menu-bar>
     <div class="read-wrapper">
       <div id="read"></div>
       <div class="mask">
@@ -28,6 +36,41 @@ export default {
         { fontSize: 14 },
         { fontSize: 16 },
         { fontSize: 18 }
+      ],
+      defaultTheme: 0,
+      themeList: [
+        {
+          name: 'default',
+          style: {
+            body: {
+              color: '#000', background: '#fff'
+            }
+          }
+        },
+        {
+          name: 'eye',
+          style: {
+            body: {
+              color: '#000', background: '#ceeaba'
+            }
+          }
+        },
+        {
+          name: 'night',
+          style: {
+            body: {
+              color: '#fff', background: '#000'
+            }
+          }
+        },
+        {
+          name: 'gold',
+          style: {
+            body: {
+              color: '#000', background: 'rgb(241,236,226)'
+            }
+          }
+        }
       ]
     }
   },
@@ -47,6 +90,8 @@ export default {
       // 渲染电子书
       this.rendition.display()
       this.themes = this.rendition.themes
+      this.registerTheme()
+      this.setTheme(2)
     },
     previous () {
       if (this.rendition) {
@@ -67,6 +112,14 @@ export default {
     handleSetFontSize (fontSize) {
       console.log(fontSize)
       this.themes.fontSize(fontSize + 'px')
+    },
+    registerTheme () {
+      this.themeList.forEach(v => {
+        this.themes.register(v.name, v.style)
+      })
+    },
+    setTheme (index) {
+      this.themes.select(this.themeList[index].name)
     }
   },
   created () {
