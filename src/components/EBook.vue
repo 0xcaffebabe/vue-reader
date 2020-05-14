@@ -1,7 +1,7 @@
 <template>
   <div class="ebook">
     <title-bar :show="menuShow"></title-bar>
-    <menu-bar :show="menuShow" ref="menuBar" :fontSizeList="fontSizeList"></menu-bar>
+    <menu-bar :show="menuShow" ref="menuBar" :fontSizeList="fontSizeList" @setFontSize="handleSetFontSize"></menu-bar>
     <div class="read-wrapper">
       <div id="read"></div>
       <div class="mask">
@@ -46,6 +46,7 @@ export default {
       })
       // 渲染电子书
       this.rendition.display()
+      this.themes = this.rendition.themes
     },
     previous () {
       if (this.rendition) {
@@ -62,6 +63,10 @@ export default {
       if (!this.menuShow) {
         this.$refs.menuBar.hideFontSetting()
       }
+    },
+    handleSetFontSize (fontSize) {
+      console.log(fontSize)
+      this.themes.fontSize(fontSize + 'px')
     }
   },
   created () {
