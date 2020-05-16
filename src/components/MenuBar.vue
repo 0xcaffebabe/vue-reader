@@ -6,7 +6,7 @@
           <span>菜单</span>
         </div>
         <div class="icon-wrapper">
-          <span>开关</span>
+          <span @click="showSetting(2)">进度</span>
         </div>
         <div class="icon-wrapper">
           <span @click="showSetting(1)">主题</span>
@@ -36,6 +36,14 @@
             <div class="text">{{item.name}}</div>
           </div>
         </div>
+        <div class="setting-progress" v-else-if="showFlag== 2">
+          <input type="range" style="width:100%" min="0" max="100" step="1"
+          v-model="progress"
+          @change="$emit('progressChange',progress)"
+          v-if="progressAvaliable"
+          >
+          <span v-else>加载中</span>
+        </div>
       </div>
     </transition>
   </div>
@@ -43,12 +51,13 @@
 
 <script>
 export default {
-  props: ['show', 'fontSizeList', 'defaultTheme', 'themeList'],
+  props: ['show', 'fontSizeList', 'defaultTheme', 'themeList', 'progressAvaliable'],
   data () {
     return {
       fontSettingShow: false,
       defaultFontSize: 14,
-      showFlag: 0
+      showFlag: 2,
+      progress: 0
     }
   },
   methods: {

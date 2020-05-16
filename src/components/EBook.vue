@@ -9,6 +9,8 @@
     :themeList="themeList"
     :defaultTheme="defaultTheme"
     @setTheme="setTheme"
+    @progressChange="onProgessChange"
+    :progressAvaliable="bookAvaliable"
     ></menu-bar>
     <div class="read-wrapper">
       <div id="read"></div>
@@ -31,6 +33,7 @@ export default {
     return {
       book: {},
       menuShow: false,
+      bookAvaliable: false,
       fontSizeList: [
         { fontSize: 12 },
         { fontSize: 14 },
@@ -91,7 +94,15 @@ export default {
       this.rendition.display()
       this.themes = this.rendition.themes
       this.registerTheme()
-      this.setTheme(2)
+      this.setTheme(0)
+      this.book.ready.then(() => {
+        this.navigation = this.book.navigation
+        return this.book.locations.generate()
+      }).then(location => {
+        this.bookAvaliable = true
+        this.locations = this.book.locations
+        this.onProgessChange(50)
+      })
     },
     previous () {
       if (this.rendition) {
@@ -120,6 +131,15 @@ export default {
     },
     setTheme (index) {
       this.themes.select(this.themeList[index].name)
+    },
+    onProgessChange (process) {
+      console.log(process)
+      const percentag = process / 100
+      const location = percentag > 0 ? this.locations.cfiFromPercentage(percentag) : 0
+      this.rendition.display(location)
+    },
+    jumpTo (href) {
+      this.rendition.display(href)
     }
   },
   created () {
